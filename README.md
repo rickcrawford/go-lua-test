@@ -1,8 +1,8 @@
-Lua Environment Test
+Go Lua Environment Tests
 ====================
 
 Frustrated by a lack of documentation on the LuaJIT and Go I decided to do a quick project
-to test out a couple of the libraries I came across. 
+to test out a couple of the popular libraries I came across. 
 
 
 
