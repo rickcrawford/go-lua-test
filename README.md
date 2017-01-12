@@ -1,4 +1,4 @@
-Go Lua Environment Tests
+Using Lua in GO
 ====================
 
 Frustrated by a lack of documentation on the LuaJIT and Go I decided to do a quick project
@@ -213,7 +213,7 @@ This library has the Lua 5.2 VM implemented entirely in go! Sacraficing some per
 I have implemented the same functions in this embedded VM to show similarities to golua. From their own documentation portability comes at the sacrafice of performance - this is an order of magnitude slower than the C bindings.
 
 ## [yuin/gopher-lua](https://github.com/yuin/gopher-lua)
-This is another all in one library. Since I went through the trouble for go-lua, I figured it couldn't hurt to have some more examples.
+This is another all in one library. Since I went through the trouble for go-lua, I figured it couldn't hurt to have some more examples. This library is faster than Shopify's implementation.
 
 
 
