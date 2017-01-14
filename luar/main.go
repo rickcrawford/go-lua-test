@@ -10,15 +10,24 @@ import (
 )
 
 type Person struct {
-	name string
+	Name string `lua:"name"`
 }
 
-func (p *Person) Name() string {
-	return p.name
+func (p *Person) F1(L *lua.State) int {
+	val := L.ToString(-1)
+	p.Name = val
+
+	return 0
+}
+
+func (p *Person) F2(L *lua.State) int {
+	L.PushString(p.Name)
+
+	return 1
 }
 
 func (p Person) String() string {
-	return fmt.Sprintf("Person{Name: %s}", p.name)
+	return fmt.Sprintf("Person{Name: %s}", p.Name)
 }
 
 func prettyJson(L *lua.State) {
@@ -33,6 +42,60 @@ func prettyJson(L *lua.State) {
 func memberTest(L *lua.State) {
 	L.GetGlobal("member_test")
 	L.Call(0, 0)
+}
+
+func addFunc(L *lua.State, key string, f func(*lua.State) int) {
+	L.PushString(key)
+	L.PushGoFunction(f)
+	L.SetTable(-3)
+}
+
+func addString(L *lua.State, key, val string) {
+	L.PushString(key)
+	L.PushString(val)
+	L.SetTable(-3)
+}
+
+func runStructTest(L *lua.State) {
+	L.GetGlobal("test_struct")
+	L.CreateTable(1, 0)
+	// L.PushString("__index")
+	// L.PushValue(-2)
+	// L.SetTable(-3)
+
+	addFunc(L, "test", func(L *lua.State) int {
+		L.PushString("Asdf")
+		return 1
+	})
+
+	addString(L, "rick", "test")
+	if err := L.Call(1, 0); err != nil {
+		log.Println(err)
+	}
+}
+
+func runStructTest2(L *lua.State) {
+	L.GetGlobal("test_struct")
+	person := &Person{"RICK"}
+	luar.GoToLua(L, person)
+
+	addFunc(L, "test", func(L *lua.State) int {
+		L.PushString("Asdf")
+		return 1
+	})
+
+	str := []string{}
+
+	addFunc(L, "add", func(L *lua.State) int {
+		str = append(str, L.ToString(-1))
+		return 0
+	})
+
+	if err := L.Call(1, 0); err != nil {
+		log.Println(err)
+	}
+
+	fmt.Printf("%#v\n", str)
 }
 
 func runLuar(filename string) {
@@ -65,12 +128,16 @@ func runLuar(filename string) {
 
 	luar.Register(L, "person", luar.Map{
 		"new": func(name string) *Person {
-			return &Person{name: name}
+			return &Person{Name: name}
 		},
 	})
 
-	prettyJson(L)
-	memberTest(L)
+	// prettyJson(L)
+	// memberTest(L)
+
+	fmt.Println("--------------------")
+	runStructTest(L)
+	runStructTest2(L)
 
 	fmt.Printf("top: %d\n", L.GetTop())
 

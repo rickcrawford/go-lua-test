@@ -16,3 +16,17 @@ function member_test()
   print(p.Name())
 
 end
+
+function test_struct(obj) 
+  print(obj.test())
+  print(obj:test())
+  print(obj.rick)
+  print(obj['rick'])
+  print(obj)
+  print(obj.name)
+  print(obj['name'])
+
+  obj:add("1")
+  obj:add("2")
+
+end
